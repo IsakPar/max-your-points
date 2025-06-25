@@ -39,7 +39,7 @@ services:
         generateValue: true # Will be set after frontend deployment
       # Database URL for Render PostgreSQL
       - key: DATABASE_URL
-        value: "postgresql://cheeky_penguin_user:tJARpyzt5Kjpm2p4tl0BcBheV5YsWeOo@dpg-d1e6kjadbo4c73ch06ng-a.frankfurt-postgres.render.com/cheeky_penguin"
+        sync: false # Allow manual configuration in dashboard
       # Cloudinary settings - you'll need to set these manually
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
