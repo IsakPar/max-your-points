@@ -1,3 +1,9 @@
 {
-  "buildCommand": "cd backend && npx prisma db push && npm start"
-} 
+  "services": {
+    "backend": {
+      "root": "backend",
+      "buildCommand": "npx prisma db push",
+      "startCommand": "npm start"
+    }
+  }
+}
