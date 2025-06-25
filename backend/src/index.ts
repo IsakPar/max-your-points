@@ -47,11 +47,8 @@ async function initializeDatabase() {
     
     logger.info('✅ DATABASE_URL found, attempting connection...');
     
-    // Initialize Prisma client with minimal configuration to avoid core dump
-    prisma = new PrismaClient({
-      log: ['error'],
-      errorFormat: 'minimal'
-    });
+    // Initialize Prisma client with minimal configuration to prevent core dump
+    prisma = new PrismaClient();
     
     // Test the connection
     await prisma.$connect();
