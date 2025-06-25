@@ -3,8 +3,8 @@ services:
     name: max-your-points-backend
     runtime: node
     rootDir: backend
-    buildCommand: npm ci && npx prisma generate && npm run build
-    startCommand: npx prisma db push && npm start
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build
+    startCommand: pnpm dlx prisma db push && pnpm start
     plan: starter
     region: frankfurt
     branch: main
