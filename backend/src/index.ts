@@ -7,7 +7,13 @@ import { createLogger } from './utils/logger';
 import path from 'path';
 
 // Load environment variables first
-dotenv.config();
+dotenv.config({ path: '.env' });
+
+// Debug environment variables in development
+if (process.env.NODE_ENV !== 'production') {
+  console.log('DATABASE_URL present:', !!process.env.DATABASE_URL);
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+}
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -30,16 +36,21 @@ async function initializeDatabase() {
   try {
     logger.info('🔄 Initializing database connection...');
     
-    if (!process.env.DATABASE_URL) {
+    // More detailed environment variable checking
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) {
       logger.warn('⚠️ No DATABASE_URL found, skipping database connection');
+      logger.info('Available env vars:', Object.keys(process.env).filter(key => key.includes('DATABASE')));
       dbConnected = false;
       return;
     }
     
-    // Initialize Prisma client with proper configuration
+    logger.info('✅ DATABASE_URL found, attempting connection...');
+    
+    // Initialize Prisma client with minimal configuration to avoid core dump
     prisma = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['info', 'warn', 'error'] : ['warn', 'error'],
-      errorFormat: 'pretty'
+      log: ['error'],
+      errorFormat: 'minimal'
     });
     
     // Test the connection
@@ -200,29 +211,32 @@ process.on('SIGTERM', async () => {
 });
 
 // Start server
-function startServer() {
-  const server = app.listen(PORT, '0.0.0.0', () => {
-    logger.info(`🚀 Max Your Points Backend running on port ${PORT}`);
-    logger.info(`📊 Health check: http://localhost:${PORT}/health`);
-    logger.info(`🧪 Test endpoint: http://localhost:${PORT}/api/test`);
-    logger.info(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+async function startServer() {
+  try {
+    // Initialize database first
+    await initializeDatabase();
     
-    // Initialize database connection in background
-    initializeDatabase().catch(err => {
-      logger.error('Database initialization failed:', err);
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      logger.info(`🚀 Max Your Points Backend running on port ${PORT}`);
+      logger.info(`📊 Health check: http://localhost:${PORT}/health`);
+      logger.info(`🧪 Test endpoint: http://localhost:${PORT}/api/test`);
+      logger.info(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
-  });
 
-  server.on('error', (error: any) => {
-    if (error.code === 'EADDRINUSE') {
-      logger.error(`Port ${PORT} is already in use`);
-    } else {
-      logger.error('Server error:', error);
-    }
+    server.on('error', (error: any) => {
+      if (error.code === 'EADDRINUSE') {
+        logger.error(`Port ${PORT} is already in use`);
+      } else {
+        logger.error('Server error:', error);
+      }
+      process.exit(1);
+    });
+
+    return server;
+  } catch (error) {
+    logger.error('Failed to start server:', error);
     process.exit(1);
-  });
-
-  return server;
+  }
 }
 
 // Start the server
