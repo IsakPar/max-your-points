@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max Your Points CMS - Product Requirements Document</title>
+    <link rel="stylesheet" href="/markdown-styles.css">
+    <link rel="icon" href="/max_your_points_favicon.png" type="image/png">
+</head>
+<body>
+    <div class="markdown-container">
+        <h1>Max Your Points CMS - Product Requirements Document</h1>
+        
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #14b8a6;">
+            <p><strong>Version:</strong> 1.0<br>
+            <strong>Date:</strong> April 3, 2025<br>
+            <strong>Author:</strong> Isak Parild<br>
+            <strong>Project:</strong> Max Your Points Content Management System</p>
+        </div>
+
+        <hr>
+
+        <h2>📋 Executive Summary</h2>
+        <p>Max Your Points requires a custom content management system to support our travel rewards and points optimization blog. This PRD outlines the development of a modern, SEO-optimized CMS that will enable efficient content creation, publication, and management for our growing audience of travel enthusiasts.</p>
+
+        <h3>Key Objectives</h3>
+        <ul>
+            <li><strong>Content Creation Excellence:</strong> Streamlined article creation with rich text editing</li>
+            <li><strong>SEO Optimization:</strong> Built-in tools for search engine optimization</li>
+            <li><strong>Performance:</strong> Fast, responsive user experience</li>
+            <li><strong>Scalability:</strong> Support for growing content library and traffic</li>
+            <li><strong>Automation:</strong> Reduce manual work in content publishing workflow</li>
+        </ul>
+
+        <hr>
+
+        <h2>🎯 Problem Statement</h2>
+
+        <h3>Current Challenges</h3>
+        <ol>
+            <li><strong>Content Management Inefficiency:</strong> No centralized system for content creation and management</li>
+            <li><strong>SEO Inconsistency:</strong> Manual SEO optimization leading to inconsistent results</li>
+            <li><strong>Publication Workflow:</strong> Time-consuming manual processes for article publishing</li>
+            <li><strong>Content Organization:</strong> Difficulty managing categories, tags, and content hierarchy</li>
+            <li><strong>Performance Issues:</strong> Need for optimized content delivery and user experience</li>
+        </ol>
+
+        <h3>Business Impact</h3>
+        <ul>
+            <li><strong>Lost Revenue:</strong> Poor SEO performance affecting organic traffic</li>
+            <li><strong>Operational Inefficiency:</strong> Manual processes consuming valuable time</li>
+            <li><strong>Scaling Limitations:</strong> Current workflow cannot support content volume growth</li>
+            <li><strong>User Experience:</strong> Suboptimal site performance affecting reader engagement</li>
+        </ul>
+
+        <hr>
+
+        <h2>👥 Target Users</h2>
+
+        <h3>Primary Users</h3>
+        <ol>
+            <li><strong>Content Creators/Editors</strong>
+                <ul>
+                    <li>Create and edit travel-related articles</li>
+                    <li>Optimize content for SEO</li>
+                    <li>Manage publication schedules</li>
+                </ul>
+            </li>
+            <li><strong>Admin Users</strong>
+                <ul>
+                    <li>Manage user accounts and permissions</li>
+                    <li>Monitor site performance and analytics</li>
+                    <li>Configure system settings</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Secondary Users</h3>
+        <ol start="3">
+            <li><strong>End Readers</strong> (Indirect)
+                <ul>
+                    <li>Experience fast, well-structured content</li>
+                    <li>Benefit from improved site navigation</li>
+                    <li>Access optimized search functionality</li>
+                </ul>
+            </li>
+        </ol>
+
+        <hr>
+
+        <h2>✨ Core Features & Requirements</h2>
+
+        <h3>1. Content Management System</h3>
+
+        <h4>1.1 Article Creation & Editing</h4>
+        <div style="background: #f0fdfa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+            <p><strong>Rich Text Editor</strong></p>
+            <ul>
+                <li>WYSIWYG editing interface</li>
+                <li>Support for headers, lists, links, images</li>
+                <li>Custom formatting options</li>
+                <li>Real-time preview capability</li>
+                <li>Auto-save functionality</li>
+            </ul>
+        </div>
+
+        <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+            <p><strong>Content Structure</strong></p>
+            <ul>
+                <li>Title, slug, meta description</li>
+                <li>Featured image support with optimization</li>
+                <li>Category and subcategory assignment</li>
+                <li>Publication status (draft, published, scheduled)</li>
+                <li>Reading time calculation</li>
+            </ul>
+        </div>
+
+        <h4>1.2 SEO Optimization Tools</h4>
+        <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+            <p><strong>Built-in SEO Analysis</strong></p>
+            <ul>
+                <li>Real-time SEO scoring</li>
+                <li>Keyword density analysis</li>
+                <li>Meta tag optimization</li>
+                <li>Header structure validation</li>
+                <li>Image alt-text checking</li>
+            </ul>
+        </div>
+
+        <div style="background: #f3e8ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+            <p><strong>Semantic HTML Processing</strong></p>
+            <ul>
+                <li>Automatic semantic markup generation</li>
+                <li>Schema.org structured data</li>
+                <li>Open Graph meta tags</li>
+                <li>Twitter Card optimization</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2>🛠 Technical Requirements</h2>
+
+        <h3>Frontend Stack</h3>
+        <ul>
+            <li><strong>Framework:</strong> Next.js 15.2.4+ (App Router)</li>
+            <li><strong>Styling:</strong> Tailwind CSS + shadcn/ui components</li>
+            <li><strong>Package Manager:</strong> pnpm (consistent with team preference)</li>
+            <li><strong>TypeScript:</strong> Full TypeScript implementation</li>
+        </ul>
+
+        <h3>Backend Architecture</h3>
+        <ul>
+            <li><strong>API:</strong> Express.js with TypeScript</li>
+            <li><strong>Database:</strong> PostgreSQL with Prisma ORM</li>
+            <li><strong>Authentication:</strong> JWT-based authentication</li>
+            <li><strong>File Storage:</strong> Cloudinary integration for media</li>
+        </ul>
+
+        <hr>
+
+        <h2>📱 User Experience Requirements</h2>
+
+        <h3>Design Principles</h3>
+        <ol>
+            <li><strong>Intuitive Interface:</strong> Easy-to-use admin interface</li>
+            <li><strong>Responsive Design:</strong> Mobile-first approach</li>
+            <li><strong>Performance:</strong> &lt; 3 second page load times</li>
+            <li><strong>Accessibility:</strong> WCAG 2.1 AA compliance</li>
+            <li><strong>Consistency:</strong> Unified design language</li>
+        </ol>
+
+        <h3>User Workflows</h3>
+
+        <h4>Content Creation Workflow</h4>
+        <ol>
+            <li><strong>Login</strong> → Admin dashboard</li>
+            <li><strong>Create New Article</strong> → Rich text editor</li>
+            <li><strong>Add Content</strong> → Text, images, formatting</li>
+            <li><strong>SEO Optimization</strong> → Built-in analysis tools</li>
+            <li><strong>Preview & Publish</strong> → Content review and publication</li>
+        </ol>
+
+        <h4>Content Management Workflow</h4>
+        <ol>
+            <li><strong>Content Library</strong> → View all articles</li>
+            <li><strong>Filter & Search</strong> → Find specific content</li>
+            <li><strong>Edit/Update</strong> → Modify existing content</li>
+            <li><strong>Manage Categories</strong> → Organize content structure</li>
+        </ol>
+
+        <hr>
+
+        <h2>📊 Success Metrics</h2>
+
+        <h3>Technical Metrics</h3>
+        <ul>
+            <li><strong>Performance:</strong> Page load time &lt; 3 seconds</li>
+            <li><strong>SEO:</strong> Average SEO score &gt; 90/100</li>
+            <li><strong>Uptime:</strong> 99.9% availability</li>
+            <li><strong>Build Time:</strong> &lt; 60 seconds for deployment</li>
+        </ul>
+
+        <h3>Business Metrics</h3>
+        <ul>
+            <li><strong>Content Velocity:</strong> 50% reduction in article publication time</li>
+            <li><strong>SEO Performance:</strong> 25% improvement in organic traffic</li>
+            <li><strong>User Engagement:</strong> Improved time on page and bounce rate</li>
+            <li><strong>Operational Efficiency:</strong> 40% reduction in manual tasks</li>
+        </ul>
+
+        <h3>User Experience Metrics</h3>
+        <ul>
+            <li><strong>Admin User Satisfaction:</strong> &gt; 4.5/5 rating</li>
+            <li><strong>Content Creation Speed:</strong> &lt; 30 minutes per article</li>
+            <li><strong>Error Rate:</strong> &lt; 1% for content operations</li>
+            <li><strong>Learning Curve:</strong> New users productive within 2 hours</li>
+        </ul>
+
+        <hr>
+
+        <h2>🗓 Development Timeline</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Phase</th>
+                    <th>Duration</th>
+                    <th>Key Deliverables</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Phase 1: Foundation</td>
+                    <td>Weeks 1-2</td>
+                    <td>Project setup, database schema, authentication, basic admin interface</td>
+                    <td><span class="highlight">✅ Complete</span></td>
+                </tr>
+                <tr>
+                    <td>Phase 2: Core Features</td>
+                    <td>Weeks 3-4</td>
+                    <td>Rich text editor, article CRUD, category system, SEO tools</td>
+                    <td><span class="highlight">✅ Complete</span></td>
+                </tr>
+                <tr>
+                    <td>Phase 3: Advanced Features</td>
+                    <td>Weeks 5-6</td>
+                    <td>Media management, search functionality, performance optimization</td>
+                    <td><span class="highlight">✅ Complete</span></td>
+                </tr>
+                <tr>
+                    <td>Phase 4: Polish & Launch</td>
+                    <td>Weeks 7-8</td>
+                    <td>UI/UX refinement, testing, documentation, production deployment</td>
+                    <td><span class="highlight">✅ Complete</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2>🎛 Configuration & Settings</h2>
+
+        <h3>Content Settings</h3>
+        <ul>
+            <li><strong>Default Category:</strong> Travel Hacks & Deals</li>
+            <li><strong>Auto-save Interval:</strong> 30 seconds</li>
+            <li><strong>Image Compression:</strong> 85% quality</li>
+            <li><strong>SEO Score Threshold:</strong> 80 for publication</li>
+        </ul>
+
+        <h3>User Permissions</h3>
+        <ul>
+            <li><strong>Admin:</strong> Full access to all features</li>
+            <li><strong>Editor:</strong> Content creation, editing, publishing</li>
+            <li><strong>Contributor:</strong> Content creation, draft submission</li>
+        </ul>
+
+        <hr>
+
+        <h2>🔒 Security Considerations</h2>
+
+        <h3>Data Protection</h3>
+        <ul>
+            <li><strong>Encryption:</strong> All sensitive data encrypted at rest</li>
+            <li><strong>Authentication:</strong> Multi-factor authentication support</li>
+            <li><strong>Access Control:</strong> Role-based permissions</li>
+            <li><strong>Audit Logging:</strong> Complete action audit trail</li>
+        </ul>
+
+        <h3>Input Validation</h3>
+        <ul>
+            <li><strong>XSS Prevention:</strong> Content sanitization</li>
+            <li><strong>SQL Injection:</strong> Parameterized queries</li>
+            <li><strong>File Upload:</strong> Secure file handling</li>
+            <li><strong>Rate Limiting:</strong> API request throttling</li>
+        </ul>
+
+        <hr>
+
+        <h2>🚀 Future Enhancements</h2>
+
+        <h3>Phase 2 Features</h3>
+        <ul>
+            <li><strong>Advanced Analytics:</strong> Custom dashboard</li>
+            <li><strong>Email Newsletter:</strong> Integrated email campaigns</li>
+            <li><strong>Comment System:</strong> User engagement features</li>
+            <li><strong>Mobile App:</strong> React Native companion app</li>
+        </ul>
+
+        <h3>Phase 3 Features</h3>
+        <ul>
+            <li><strong>AI Integration:</strong> Content suggestions and optimization</li>
+            <li><strong>Multi-language Support:</strong> Internationalization</li>
+            <li><strong>Advanced SEO:</strong> Schema markup automation</li>
+            <li><strong>A/B Testing:</strong> Content performance testing</li>
+        </ul>
+
+        <hr>
+
+        <h2>✅ Acceptance Criteria</h2>
+
+        <h3>Must-Have Features</h3>
+        <ul>
+            <li>☑ Complete article creation and editing system</li>
+            <li>☑ SEO optimization tools with real-time scoring</li>
+            <li>☑ Category and subcategory management</li>
+            <li>☑ Media upload and optimization</li>
+            <li>☑ User authentication and role management</li>
+            <li>☑ Responsive admin interface</li>
+            <li>☑ Search functionality</li>
+            <li>☑ Performance optimization</li>
+        </ul>
+
+        <h3>Quality Gates</h3>
+        <ul>
+            <li>☑ All features tested and bug-free</li>
+            <li>☑ SEO scores consistently above 80</li>
+            <li>☑ Page load times under 3 seconds</li>
+            <li>☑ Mobile-responsive design</li>
+            <li>☑ Security audit passed</li>
+            <li>☑ Performance benchmarks met</li>
+        </ul>
+
+        <hr>
+
+        <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #f0fdfa 0%, #eff6ff 100%); border-radius: 12px; margin-top: 3rem;">
+            <h3 style="color: #0f766e; margin-bottom: 1rem;">Document Status</h3>
+            <p style="font-size: 1.1rem; color: #374151;"><strong>Status:</strong> <span class="highlight">Approved & Complete</span><br>
+            <strong>Last Updated:</strong> June 24, 2025<br>
+            <strong>Project Status:</strong> Production Ready<br>
+            <strong>All Requirements:</strong> Successfully Implemented</p>
+            
+            <div style="margin-top: 1.5rem;">
+                <a href="/" style="display: inline-block; background: #0f766e; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background 0.2s ease; margin-right: 1rem;">
+                    ← Back to Max Your Points
+                </a>
+                <a href="/BuildLogs.html" style="display: inline-block; background: #3b82f6; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background 0.2s ease;">
+                    View Development Logs
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

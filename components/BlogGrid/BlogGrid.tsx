@@ -51,12 +51,7 @@ export default function BlogGrid({ posts }: BlogGridProps) {
                 {post.summary}
               </p>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-xs text-gray-500">AV</span>
-                  </div>
-                  <span className="text-sm text-gray-600">{post.author}</span>
-                </div>
+                <span className="text-sm text-gray-600">{post.author}</span>
                 <span className="text-sm text-gray-500">{post.date}</span>
               </div>
             </div>

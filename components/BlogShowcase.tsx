@@ -1,16 +1,20 @@
 "use client"
 import Link from "next/link"
+import Image from "next/image"
 import { ChevronRight } from "lucide-react"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
+import { memo, useCallback } from "react"
 
 interface CategoryTagProps {
   children: React.ReactNode
 }
 
-const CategoryTag = ({ children }: CategoryTagProps) => {
-  return <span className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-medium">{children}</span>
-}
+const CategoryTag = memo(({ children }: CategoryTagProps) => {
+  return <span className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-medium group-hover:bg-teal-600 group-hover:text-white transition-colors duration-500">{children}</span>
+})
+
+CategoryTag.displayName = 'CategoryTag'
 
 interface BlogPostProps {
   post: {
@@ -24,55 +28,73 @@ interface BlogPostProps {
   }
 }
 
-// Update the BlogPost component to make the entire card clickable with hover effect
-const BlogPost = ({ post }: BlogPostProps) => {
+// Memoized BlogPost component to prevent unnecessary re-renders
+const BlogPost = memo(({ post }: BlogPostProps) => {
   const { title, summary, category, readTime, image, slug } = post
   const router = useRouter()
 
-  const handleCardClick = () => {
+  const handleCardClick = useCallback(() => {
     router.push(slug)
-  }
+  }, [router, slug])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleCardClick()
+    }
+  }, [handleCardClick])
 
   return (
     <div
-      className="flex-1 flex flex-col md:flex-row justify-start items-start md:items-start gap-4 md:gap-8 p-4 rounded-lg transition-all duration-300 hover:shadow-elevation hover:scale-[1.02] cursor-pointer bg-transparent group"
+      className="flex-1 flex flex-col md:flex-row justify-start items-start md:items-start gap-4 md:gap-8 p-4 rounded-xl transition-all duration-500 hover:shadow-2xl hover:shadow-teal-500/20 hover:scale-[1.05] hover:bg-[#D1F1EB] hover:-translate-y-2 cursor-pointer bg-transparent group border border-transparent hover:border-teal-200"
       onClick={handleCardClick}
+      role="button"
+      aria-label={`Read article: ${title}`}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
     >
-      <div className="w-full md:w-2/5 h-48 md:h-64 flex-shrink-0 overflow-hidden rounded-md">
-        <img 
+      <div className="w-full md:w-2/5 h-48 md:h-64 flex-shrink-0 overflow-hidden rounded-xl relative">
+        <Image 
           src={image || "/placeholder.svg"} 
           alt={title} 
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-110 group-hover:brightness-110"
+          loading="lazy"
+          quality={60}
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
         />
       </div>
       <div className="w-full md:w-3/5 flex flex-col justify-start items-start gap-4 md:gap-6">
         <div className="w-full flex flex-col justify-start items-start gap-4">
           <div className="flex justify-start items-center gap-4">
             <CategoryTag>{category}</CategoryTag>
-            <div className="text-stone-950 text-sm font-bold font-['Inter'] leading-tight">{readTime}</div>
+            <div className="text-stone-800 text-sm font-bold font-['Inter'] leading-tight group-hover:text-stone-900 transition-colors duration-500">{readTime}</div>
           </div>
           <div className="w-full flex flex-col justify-start items-start gap-2">
-            <h3 className="w-full text-stone-950 text-xl md:text-2xl font-bold leading-relaxed md:leading-loose group-hover:text-teal-600 transition-colors">
+            <h3 className="w-full text-stone-950 text-xl md:text-2xl font-bold leading-relaxed md:leading-loose group-hover:text-stone-900 group-hover:scale-105 transition-all duration-500 transform-gpu">
               {title}
             </h3>
-            <p className="w-full text-stone-950 text-base font-bold font-['Inter'] leading-normal line-clamp-3">
+            <p className="w-full text-stone-950 text-base font-bold font-['Inter'] leading-normal line-clamp-3 group-hover:text-stone-800 transition-colors duration-500">
               {summary}
             </p>
           </div>
         </div>
-        <div
-          className="rounded-xl inline-flex justify-center items-center gap-2 text-stone-950 hover:text-orange-500 transition-colors"
-          onClick={(e) => e.stopPropagation()} // Prevent triggering the parent click
-        >
+        <div className="rounded-xl inline-flex justify-center items-center gap-2 text-stone-950 group-hover:text-stone-800 transition-colors duration-500 min-h-[44px] min-w-[44px] p-2">
           <Link href={slug} className="inline-flex items-center gap-2 group/link">
-            <span className="text-base font-bold font-['Inter'] leading-normal">Read more</span>
-            <ChevronRight size={24} className="transition-transform duration-300 group-hover/link:translate-x-1" />
+            <span className="text-base font-bold font-['Inter'] leading-normal">
+              Read more<span className="sr-only"> about {title}</span>
+            </span>
+            <ChevronRight size={24} className="transition-transform duration-500 group-hover/link:translate-x-1" />
           </Link>
         </div>
       </div>
     </div>
   )
-}
+})
+
+BlogPost.displayName = 'BlogPost'
 
 interface OutlinedGradientButtonProps {
   href?: string
@@ -137,84 +159,74 @@ const BlogShowcase: React.FC<BlogShowcaseProps> = ({
   posts = [],
   className = "",
 }) => {
-  // Default blog posts if none are provided
-  const defaultPosts = [
-    {
-      id: 1,
-      title: "Maximize Your Airline Points",
-      summary:
-        "Learn how to strategically earn and redeem airline points for maximum value on your next trip. Discover insider techniques that frequent flyers use to get more from their miles and travel further for less.",
-      category: "Airline",
-      readTime: "5 min read",
-      image: "/placeholder.svg?key=quq3l",
-      slug: "/blog/maximize-airline-points",
-    },
-    {
-      id: 2,
-      title: "Best Credit Cards for Travel",
-      summary:
-        "Discover the top credit cards that offer exceptional travel rewards, perks, and benefits for frequent travelers. Compare sign-up bonuses, earning rates, and redemption options to find your perfect travel companion.",
-      category: "Credit",
-      readTime: "7 min read",
-      image: "/travel-rewards-cards.png",
-      slug: "/blog/best-credit-cards-travel",
-    },
-    {
-      id: 3,
-      title: "Top Hotels for Budget Travelers",
-      summary:
-        "Find out how to book luxury accommodations without breaking the bank using points, promotions, and insider strategies. Learn which hotel chains offer the best value and maximize elite status benefits.",
-      category: "Hotels",
-      readTime: "6 min read",
-      image: "/luxury-hotel-room-with-view.png",
-      slug: "/blog/budget-luxury-hotels",
-    },
-    {
-      id: 4,
-      title: "Hidden Gems: Underrated Destinations",
-      summary:
-        "Explore lesser-known travel destinations that offer incredible experiences without the crowds and high costs. Discover beautiful locations that haven't been overrun by tourism and offer authentic cultural experiences.",
-      category: "Destinations",
-      readTime: "5 min read",
-      image: "/hidden-beach-paradise.png",
-      slug: "/blog/hidden-gem-destinations",
-    },
-  ]
-
-  const blogPosts = posts.length > 0 ? posts : defaultPosts
+  // If no posts are provided, show empty state instead of default posts
+  if (!posts || posts.length === 0) {
+    return (
+      <section className={`py-16 md:py-24 bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 ${className}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-stone-950 mb-4">
+              {title}
+            </h2>
+            <p className="text-xl text-stone-700 max-w-2xl mx-auto">
+              {subtitle}
+            </p>
+          </div>
+          
+          <div className="text-center py-16">
+            <div className="mb-8">
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">No Articles Yet</h3>
+              <p className="text-gray-600 max-w-md mx-auto">
+                We're working on bringing you amazing travel content. Check back soon for the latest insights and tips!
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button asChild>
+                <Link href="/admin">
+                  <span>Add Your First Article</span>
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/blog">
+                  <span>Explore Blog Categories</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
-    <section
-      className={`w-full max-w-[1440px] px-4 md:px-16 py-16 md:py-28 flex flex-col justify-start items-start gap-10 md:gap-20 overflow-hidden bg-[#ECFDF5] ${className}`}
-    >
-      <div className="w-full md:w-[768px] flex flex-col justify-start items-start gap-4">
-        <div className="inline-flex justify-start items-center">
-          <div className="text-stone-950 text-base font-bold font-['Inter'] leading-normal">Blog</div>
-        </div>
-        <div className="self-stretch flex flex-col justify-start items-start md:items-center gap-4 md:gap-6">
-          <h2 className="self-stretch text-stone-950 text-3xl md:text-5xl font-bold leading-tight md:leading-[57.60px]">
+    <section className={`py-16 md:py-24 bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 ${className}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-stone-950 mb-4">
             {title}
           </h2>
-          <p className="self-stretch text-stone-950 text-base md:text-lg font-bold font-['Inter'] leading-relaxed">
+          <p className="text-xl text-stone-700 max-w-2xl mx-auto">
             {subtitle}
           </p>
         </div>
-      </div>
-
-      <div className="w-full flex flex-col justify-start items-start gap-8 md:gap-12">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16">
-          {blogPosts.map((post) => (
+        
+        <div className="grid gap-8 md:gap-12">
+          {posts.slice(0, 4).map((post) => (
             <BlogPost key={post.id} post={post} />
           ))}
         </div>
-      </div>
-
-      <div className="self-stretch flex flex-col justify-start items-center md:items-end gap-4">
-        <Link href="/blog" className="inline-block">
-          <OutlinedGradientButton>
-            View all
+        
+        <div className="text-center mt-16">
+          <OutlinedGradientButton href="/blog">
+            View All Posts
           </OutlinedGradientButton>
-        </Link>
+        </div>
       </div>
     </section>
   )

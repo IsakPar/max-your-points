@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 const navLinks = [
-  { label: "Airline Deals", href: "/blog/categories/airline-and-aviation" },
+  { label: "Airline Deals", href: "/blog/categories/airlines-and-aviation" },
   { label: "Credit Insights", href: "/blog/categories/credit-cards-and-points" },
   { label: "Hotel Reviews", href: "/blog/categories/hotels-and-trip-reports" },
   { label: "Travel Tips", href: "/blog/categories/travel-hacks-and-deals" },
@@ -11,18 +11,21 @@ const navLinks = [
 const Header: React.FC = () => {
   return (
     <header className="w-full bg-[#D1F1EB]">
-      {/* Hero Image Full Width, No Overlay */}
+      {/* Hero Image Full Width, Optimized for Performance */}
       <div className="w-full relative h-[40vw] min-h-[300px] max-h-[480px] bg-[#D1F1EB]">
         <Image
           src="/aircraft-landing.jpg"
           alt="Aircraft landing with mountains in background"
           fill
           priority
-          className="object-cover object-center w-full h-full"
+          className="object-cover object-center"
           sizes="100vw"
+          quality={80}
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
         />
       </div>
-      {/* Two Columns Below Image */}
+      {/* Content Section - Optimized Layout */}
       <div className="max-w-6xl mx-auto px-6 md:px-12 py-12 bg-[#D1F1EB]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           <div>

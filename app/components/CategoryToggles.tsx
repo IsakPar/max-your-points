@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 interface CategoryTogglesProps {
   category: Category
 }
-
+// <- CategoryToggles.tsx ->
 export function CategoryToggles({ category }: CategoryTogglesProps) {
   const pathname = usePathname()
   

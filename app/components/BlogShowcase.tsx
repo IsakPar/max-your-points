@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
-import { Button } from "./ui/Button"
+import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
 
 interface CategoryTagProps {
@@ -133,51 +133,37 @@ const BlogShowcase: React.FC<BlogShowcaseProps> = ({
   posts = [],
   className = "",
 }) => {
-  // Default blog posts if none are provided
-  const defaultPosts = [
-    {
-      id: 1,
-      title: "Maximize Your Airline Points",
-      summary:
-        "Learn how to strategically earn and redeem airline points for maximum value on your next trip. Discover insider techniques that frequent flyers use to get more from their miles and travel further for less.",
-      category: "Airline",
-      readTime: "5 min read",
-      image: "/placeholder.svg?key=quq3l",
-      slug: "/blog/maximize-airline-points",
-    },
-    {
-      id: 2,
-      title: "Best Credit Cards for Travel",
-      summary:
-        "Discover the top credit cards that offer exceptional travel rewards, perks, and benefits for frequent travelers. Compare sign-up bonuses, earning rates, and redemption options to find your perfect travel companion.",
-      category: "Credit",
-      readTime: "7 min read",
-      image: "/travel-rewards-cards.png",
-      slug: "/blog/best-credit-cards-travel",
-    },
-    {
-      id: 3,
-      title: "Top Hotels for Budget Travelers",
-      summary:
-        "Find out how to book luxury accommodations without breaking the bank using points, promotions, and insider strategies. Learn which hotel chains offer the best value and maximize elite status benefits.",
-      category: "Hotels",
-      readTime: "6 min read",
-      image: "/luxury-hotel-room-with-view.png",
-      slug: "/blog/budget-luxury-hotels",
-    },
-    {
-      id: 4,
-      title: "Hidden Gems: Underrated Destinations",
-      summary:
-        "Explore lesser-known travel destinations that offer incredible experiences without the crowds and high costs. Discover beautiful locations that haven't been overrun by tourism and offer authentic cultural experiences.",
-      category: "Destinations",
-      readTime: "5 min read",
-      image: "/hidden-beach-paradise.png",
-      slug: "/blog/hidden-gem-destinations",
-    },
-  ]
-
-  const blogPosts = posts.length > 0 ? posts : defaultPosts
+  // If no posts are provided, show empty state instead of default posts
+  if (!posts || posts.length === 0) {
+    return (
+      <section className={`py-16 md:py-24 bg-white ${className}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-stone-950 mb-4">
+              {title}
+            </h2>
+            <p className="text-xl text-stone-700 max-w-2xl mx-auto">
+              {subtitle}
+            </p>
+          </div>
+          
+          <div className="text-center py-16">
+            <div className="mb-8">
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">No Articles Yet</h3>
+              <p className="text-gray-600 max-w-md mx-auto">
+                We're working on bringing you amazing travel content. Check back soon for the latest insights and tips!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section
@@ -199,7 +185,7 @@ const BlogShowcase: React.FC<BlogShowcaseProps> = ({
 
       <div className="w-full flex flex-col justify-start items-start gap-8 md:gap-12">
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16">
-          {blogPosts.map((post) => (
+          {posts.map((post) => (
             <BlogPost key={post.id} post={post} />
           ))}
         </div>

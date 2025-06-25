@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import { SubscriptionSuccess } from "@/components/blog/SubscriptionSuccess"
 
 type DesignType = 'gradient-teal' | 'gradient-orange' | 'pattern-dots' | 'pattern-lines' | 'overlay-teal'
 
@@ -39,6 +40,7 @@ const CTASection = ({
 }: CTASectionProps) => {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<null | 'success' | 'error'>(null)
   const [errorMessage, setErrorMessage] = useState("")
   const [isHovered, setIsHovered] = useState(false)
@@ -141,23 +143,31 @@ const CTASection = ({
         // Use the provided custom handler
         await onSubscribe(email)
       } else {
-        // Simulate API call with a delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        // In a real implementation, you would make an API call to your backend
-        // const response = await fetch('/api/subscribe', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ email })
-        // });
-        // if (!response.ok) throw new Error('Subscription failed');
-      }
+        // Use our API endpoint
+        const response = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        })
 
+        const responseData = await response.json()
+
+        if (!response.ok) {
+          throw new Error("Subscription failed")
+        }
+      }
+      setShowSuccess(true)
       setSubmitStatus("success")
-      setEmail("")
+      // Don't clear email immediately so it shows in the success popup
+      setTimeout(() => setEmail(""), 5000)
 
       // Redirect if URL is provided
       if (redirectUrl) {
-        window.location.href = redirectUrl
+        setTimeout(() => {
+          window.location.href = redirectUrl
+        }, 2000)
       }
     } catch (error) {
       setSubmitStatus("error")
@@ -174,68 +184,74 @@ const CTASection = ({
   const errorTextClass = design.includes("overlay") ? "text-white" : "text-red-800"
 
   return (
-    <section
-      className={`w-full max-w-[1440px] px-4 md:px-16 py-12 md:py-20 flex flex-col justify-start items-center gap-8 overflow-hidden ${className}`}
-    >
-      <div
-        className={`self-stretch p-6 md:p-12 ${currentDesign.wrapper} rounded-xl flex flex-col justify-between items-center overflow-hidden shadow-lg border border-white/20`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+    <>
+      <section
+        className={`w-full max-w-[1440px] px-4 md:px-16 py-12 md:py-20 flex flex-col justify-start items-center gap-8 overflow-hidden ${className}`}
       >
-        <div className="w-full flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="w-full md:w-1/2 flex flex-col justify-start items-start gap-4">
-            <h2 className={`self-stretch ${currentDesign.title} text-2xl md:text-4xl font-bold leading-tight`}>
-              {title}
-            </h2>
-            <p className={`self-stretch ${currentDesign.description} text-base md:text-lg font-medium leading-relaxed`}>
-              {description}
-            </p>
-          </div>
+        <div
+          className={`self-stretch p-6 md:p-12 ${currentDesign.wrapper} rounded-xl flex flex-col justify-between items-center overflow-hidden shadow-lg border border-white/20`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div className="w-full flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="w-full md:w-1/2 flex flex-col justify-start items-start gap-4">
+              <h2 className={`self-stretch ${currentDesign.title} text-2xl md:text-4xl font-bold leading-tight`}>
+                {title}
+              </h2>
+              <p className={`self-stretch ${currentDesign.description} text-base md:text-lg font-medium leading-relaxed`}>
+                {description}
+              </p>
+              <p className={`self-stretch ${currentDesign.description} text-sm opacity-75`}>
+                You can unsubscribe at any time by visiting maxyourpoints.com/unsubscribe
+              </p>
+            </div>
 
-          {withSubscribeForm ? (
-            <div className="w-full md:w-1/2 flex flex-col items-center md:items-end">
-              <form onSubmit={handleSubmit} className="w-full max-w-md">
-                <div className="flex flex-col gap-4">
-                  {/* Status messages */}
-                  {submitStatus === "success" && (
-                    <div className={`flex items-center gap-2 p-3 ${successBgClass} ${successTextClass} rounded-lg`}>
-                      <CheckCircle size={18} />
-                      <span>Thank you for subscribing!</span>
+            {withSubscribeForm ? (
+              <div className="w-full md:w-1/2 flex flex-col items-center md:items-end">
+                <form onSubmit={handleSubmit} className="w-full max-w-md">
+                  <div className="flex flex-col gap-4">
+                    {/* Error message only (success will use popup) */}
+                    {submitStatus === "error" && (
+                      <div className={`p-3 rounded-lg ${errorBgClass} flex items-center gap-2`}>
+                        <AlertCircle size={16} className={errorTextClass} />
+                        <span className={`text-sm ${errorTextClass}`}>{errorMessage}</span>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row gap-3">
+                                             <input
+                         type="email"
+                         value={email}
+                         onChange={(e) => setEmail(e.target.value)}
+                         placeholder="Enter your email"
+                         className={`flex-1 px-4 py-3 rounded-2xl border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 ${currentDesign.input}`}
+                         disabled={isSubmitting}
+                         required
+                       />
+                      <CustomButton type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Subscribing..." : buttonText}
+                      </CustomButton>
                     </div>
-                  )}
-
-                  {submitStatus === "error" && (
-                    <div className={`flex items-center gap-2 p-3 ${errorBgClass} ${errorTextClass} rounded-lg`}>
-                      <AlertCircle size={18} />
-                      <span>{errorMessage}</span>
-                    </div>
-                  )}
-
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className={`flex-grow px-4 py-3 rounded-xl border ${currentDesign.input} focus:outline-none focus:ring-2 focus:ring-teal-500`}
-                    />
-                    <CustomButton type="submit" disabled={isSubmitting}>
-                      {isSubmitting ? "Subscribing..." : buttonText}
-                    </CustomButton>
                   </div>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <div className="w-full md:w-1/2 flex justify-center md:justify-end">
-              <CustomButton href={redirectUrl || "/subscribe"}>
-                {buttonText}
-              </CustomButton>
-            </div>
-          )}
+                </form>
+              </div>
+            ) : (
+              <div className="w-full md:w-auto flex justify-center md:justify-end">
+                <CustomButton href={redirectUrl || "/subscribe"}>
+                  {buttonText}
+                </CustomButton>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <SubscriptionSuccess
+        isVisible={showSuccess}
+        email={email}
+        onClose={() => setShowSuccess(false)}
+      />
+    </>
   )
 }
 

@@ -12,7 +12,7 @@ export default function AirlineSubcategoryToggle({
   onSubcategoryChange, 
   activeSubcategory 
 }: AirlineSubcategoryToggleProps) {
-  const airlineCategory = categories.find(cat => cat.slug === "airline-and-aviation")
+  const airlineCategory = categories.find(cat => cat.slug === "airlines-and-aviation")
   
   if (!airlineCategory) return null
 

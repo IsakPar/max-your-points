@@ -1,22 +1,44 @@
-"use client"
-
 import * as React from "react"
-import { posts, type BlogPost } from "@/lib/posts"
+import { getArticlesByCategory, getFeaturedArticlesByCategory } from "@/lib/articles-simple"
 import CTASection from "@/components/CTASection/CTASection"
 import Image from "next/image"
 import CategoryHero from "@/components/blog/CategoryHero"
 import FeaturedPosts from "@/components/blog/FeaturedPosts"
 import AirlineBlogGrid from "@/components/blog/AirlineBlogGrid"
 
-export default function AirlineAndAviationPage() {
-  // Filter posts for airline category
-  const airlinePosts = posts.filter((post: BlogPost) => post.category === "Airlines & Aviation")
+// Transform database articles to component format
+function transformToPostFormat(articles: any[]) {
+  return articles.map(article => ({
+    id: article.id, // Keep as string UUID
+    title: article.title,
+    summary: article.summary,
+    category: article.category,
+    readTime: article.readTime,
+    image: article.image || "/placeholder.svg",
+    slug: `/blog/${article.slug}`,
+    date: article.date,
+    author: article.author,
+    excerpt: article.summary,
+    tag: article.category // Add tag property for compatibility
+  }))
+}
 
-  // Get featured posts (first 3)
-  const featuredPosts = airlinePosts.slice(0, 3)
+export default async function AirlineAndAviationPage() {
+  // Fetch featured articles for this category (max 3)
+  const featuredArticlesResult = await getFeaturedArticlesByCategory('airlines-and-aviation').catch(() => [])
+  const featuredPosts = transformToPostFormat(featuredArticlesResult)
 
-  // Get remaining posts for the grid
-  const gridPosts = airlinePosts.slice(3)
+  // Fetch recent articles for the grid (excluding featured ones to avoid duplicates)
+  const result = await getArticlesByCategory('airlines-and-aviation', 24, 0).catch(() => ({ articles: [] }))
+  const allPosts = transformToPostFormat(result.articles || [])
+  
+  // Remove featured articles from the grid to avoid duplicates
+  const featuredIds = new Set(featuredPosts.map(post => post.id))
+  const gridPosts = allPosts.filter(post => !featuredIds.has(post.id))
+
+  console.log('✈️ Airline & Aviation page:')
+  console.log(`🌟 Featured articles (max 3): ${featuredPosts.length}`)
+  console.log(`📄 Grid articles: ${gridPosts.length}`)
 
   return (
     <main>

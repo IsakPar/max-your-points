@@ -2,6 +2,7 @@
 
 // Inspired by react-hot-toast library
 import * as React from "react"
+import { useState, useCallback } from 'react'
 
 import type {
   ToastActionElement,
@@ -142,53 +143,45 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">
 
-function toast({ ...props }: Toast) {
-  const id = genId()
-
-  const update = (props: ToasterToast) =>
-    dispatch({
-      type: "UPDATE_TOAST",
-      toast: { ...props, id },
-    })
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
-
-  dispatch({
-    type: "ADD_TOAST",
-    toast: {
-      ...props,
-      id,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss()
-      },
-    },
-  })
-
-  return {
-    id: id,
-    dismiss,
-    update,
-  }
+export interface Toast {
+  id: string
+  title?: string
+  description?: string
+  action?: React.ReactNode
+  variant?: 'default' | 'destructive' | 'success'
 }
 
-function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
+export function useToast() {
+  const [toasts, setToasts] = useState<Toast[]>([])
 
-  React.useEffect(() => {
-    listeners.push(setState)
-    return () => {
-      const index = listeners.indexOf(setState)
-      if (index > -1) {
-        listeners.splice(index, 1)
+  const toast = useCallback(
+    ({ ...props }: Omit<Toast, 'id'>) => {
+      const id = Math.random().toString(36).substr(2, 9)
+      const newToast: Toast = { id, ...props }
+      
+      setToasts((prev) => [...prev, newToast])
+
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id))
+      }, 5000)
+
+      return {
+        id,
+        dismiss: () => setToasts((prev) => prev.filter((t) => t.id !== id)),
+        update: (newProps: Partial<Toast>) =>
+          setToasts((prev) =>
+            prev.map((t) => (t.id === id ? { ...t, ...newProps } : t))
+          ),
       }
-    }
-  }, [state])
+    },
+    []
+  )
 
   return {
-    ...state,
     toast,
-    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    toasts,
+    dismiss: (id: string) =>
+      setToasts((prev) => prev.filter((t) => t.id !== id)),
   }
 }
-
-export { useToast, toast }

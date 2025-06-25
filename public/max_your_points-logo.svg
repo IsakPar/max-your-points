@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality;">
+<defs>
+  <style>
+    .main-text { 
+      fill: #003b61; 
+      fill-rule: evenodd; 
+      font-family: 'Arial', 'Helvetica', sans-serif; 
+      font-weight: bold;
+    }
+    .accent { 
+      fill: #ef9917; 
+      fill-rule: evenodd; 
+    }
+    .highlight { 
+      fill: #1b889b; 
+      fill-rule: evenodd; 
+    }
+  </style>
+</defs>
+
+<!-- Background -->
+<rect width="800" height="300" fill="#D1F1EB" opacity="0.05" rx="15"/>
+
+<!-- "MAX" text -->
+<g class="main-text">
+  <text x="50" y="80" font-size="48" font-weight="bold">MAX</text>
+</g>
+
+<!-- "YOUR" text -->
+<g class="main-text">
+  <text x="50" y="140" font-size="48" font-weight="bold">YOUR</text>
+</g>
+
+<!-- "POINTS" text with proper letter spacing -->
+<g class="main-text">
+  <text x="50" y="200" font-size="48" font-weight="bold">POINTS</text>
+</g>
+
+<!-- Airplane accent graphic -->
+<g class="accent" transform="translate(450, 50)">
+  <path d="M 0,40 L 60,20 L 80,35 L 120,30 L 140,45 L 120,50 L 80,45 L 60,60 L 0,80 L 20,60 L 40,50 L 20,40 Z"/>
+  <circle cx="25" cy="50" r="8" fill="#003b61"/>
+</g>
+
+<!-- Decorative points/stars -->
+<g class="highlight">
+  <circle cx="650" cy="80" r="4"/>
+  <circle cx="680" cy="100" r="3"/>
+  <circle cx="710" cy="120" r="4"/>
+  <circle cx="680" cy="140" r="3"/>
+  <circle cx="650" cy="160" r="4"/>
+  <circle cx="620" cy="180" r="3"/>
+  <circle cx="590" cy="200" r="4"/>
+</g>
+
+<!-- Tagline/subtitle -->
+<g class="main-text">
+  <text x="400" y="250" font-size="16" font-weight="normal" opacity="0.8">Travel Rewards & Points Optimization</text>
+</g>
+
+</svg> 

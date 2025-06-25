@@ -1,0 +1,185 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users & Authentication
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?   // Nullable for OAuth users
+  name          String?
+  fullName      String?   // For compatibility with current user_profiles.full_name
+  avatar        String?
+  role          Role      @default(USER)
+  verified      Boolean   @default(false)
+  lastLogin     DateTime?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // OAuth Integration
+  accounts      Account[]
+  sessions      Session[]
+  
+  // CMS Relations
+  articles      Article[]
+  adminLogs     AdminLog[]
+  mediaUploads  Media[]
+
+  @@map("users")
+}
+
+// OAuth Accounts (for NextAuth.js)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// Sessions (for NextAuth.js)
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Verification tokens (for NextAuth.js)
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+enum Role {
+  USER
+  EDITOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+// Content Management
+model Article {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  title         String
+  excerpt       String?
+  content       Json      // Rich text content (compatible with current structure)
+  featuredImage String?   @map("featured_image")
+  status        Status    @default(DRAFT)
+  publishedAt   DateTime? @map("published_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  // Relations
+  authorId      String    @map("author_id")
+  author        User      @relation(fields: [authorId], references: [id])
+  categories    ArticleCategory[]
+  
+  // SEO (matching current structure)
+  metaTitle     String?   @map("meta_title")
+  metaDescription String? @map("meta_description")
+  readingTime   Int?      @map("reading_time")
+
+  @@map("articles")
+}
+
+enum Status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  featured    Boolean   @default(false) // For matching current featured_category
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  articles    ArticleCategory[]
+
+  @@map("categories")
+}
+
+// Junction table for Article-Category many-to-many
+model ArticleCategory {
+  articleId  String  @map("article_id")
+  categoryId String  @map("category_id")
+  
+  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, categoryId])
+  @@map("article_categories")
+}
+
+// Admin Logs (matching current structure)
+model AdminLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  action    String
+  details   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("admin_logs")
+}
+
+// Newsletter subscribers (matching current structure)
+model NewsletterSubscriber {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  subscribedAt  DateTime  @default(now()) @map("subscribed_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  @@map("newsletter_subscribers")
+}
+
+// Media/Images (for file management)
+model Media {
+  id          String   @id @default(cuid())
+  filename    String
+  originalName String  @map("original_name")
+  url         String
+  cloudinaryId String? @map("cloudinary_id")
+  mimeType    String   @map("mime_type")
+  size        Int
+  uploadedBy  String   @map("uploaded_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  uploader    User     @relation(fields: [uploadedBy], references: [id])
+
+  @@map("media")
+} 

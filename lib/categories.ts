@@ -10,7 +10,7 @@ export interface Category {
 export const categories: Category[] = [
   {
     label: "Airlines & Aviation",
-    slug: "airline-and-aviation",
+    slug: "airlines-and-aviation",
     subcategories: [
       { label: "Reviews", slug: "reviews" },
       { label: "News", slug: "news" },

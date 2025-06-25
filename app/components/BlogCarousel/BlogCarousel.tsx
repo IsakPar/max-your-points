@@ -93,77 +93,70 @@ const BlogCarousel = ({
   const carouselRef = useRef<HTMLDivElement>(null)
   const autoplayTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Default blog posts if none are provided
-  const defaultPosts: BlogPost[] = [
-    {
-      id: 1,
-      title: "Maximize Your Airline Points",
-      excerpt:
-        "Learn how to strategically earn and redeem airline points for maximum value on your next trip. Discover insider techniques that frequent flyers use.",
-      category: "Airline",
-      readTime: "5 min read",
-      image: "/placeholder.svg?key=ghetz",
-      slug: "/blog/maximize-airline-points",
-      date: "May 10, 2023",
-    },
-    {
-      id: 2,
-      title: "Best Credit Cards for Travel",
-      excerpt:
-        "Discover the top credit cards that offer exceptional travel rewards, perks, and benefits for frequent travelers. Compare sign-up bonuses and earning rates.",
-      category: "Credit",
-      readTime: "7 min read",
-      image: "/placeholder.svg?key=i1lbq",
-      slug: "/blog/best-credit-cards-travel",
-      date: "April 28, 2023",
-    },
-    {
-      id: 3,
-      title: "Top Hotels for Budget Travelers",
-      excerpt:
-        "Find out how to book luxury accommodations without breaking the bank using points, promotions, and insider strategies. Learn which hotel chains offer the best value.",
-      category: "Hotels",
-      readTime: "6 min read",
-      image: "/luxury-hotel-room-with-view.png",
-      slug: "/blog/budget-luxury-hotels",
-      date: "April 15, 2023",
-    },
-    {
-      id: 4,
-      title: "Hidden Gems: Underrated Destinations",
-      excerpt:
-        "Explore lesser-known travel destinations that offer incredible experiences without the crowds and high costs. Discover beautiful locations that haven't been overrun by tourism.",
-      category: "Destinations",
-      readTime: "5 min read",
-      image: "/secluded-beach-paradise.png",
-      slug: "/blog/hidden-gem-destinations",
-      date: "March 30, 2023",
-    },
-    {
-      id: 5,
-      title: "Travel Hacking 101: Getting Started",
-      excerpt:
-        "A beginner's guide to travel hacking with step-by-step instructions on how to start maximizing your travel rewards. Learn the fundamentals of points programs.",
-      category: "Guide",
-      readTime: "8 min read",
-      image: "/travel-planning-laptop.png",
-      slug: "/blog/travel-hacking-101",
-      date: "March 15, 2023",
-    },
-  ]
+  // If no posts are provided, show empty state instead of default posts
+  if (!posts || posts.length === 0) {
+    const themeStyles = {
+      light: {
+        container: "bg-white",
+        title: "text-stone-900",
+        subtitle: "text-stone-700",
+      },
+      dark: {
+        container: "bg-stone-900",
+        title: "text-white",
+        subtitle: "text-gray-300",
+      },
+      teal: {
+        container: "bg-teal-50",
+        title: "text-stone-900",
+        subtitle: "text-stone-700",
+      },
+    }
 
-  const blogPosts = posts.length > 0 ? posts : defaultPosts
+    const currentTheme = themeStyles[theme] || themeStyles.light
+
+    return (
+      <section className={`py-16 md:py-24 ${currentTheme.container} ${className}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 ${currentTheme.title}`}>
+              {title}
+            </h2>
+            <p className={`text-xl max-w-2xl mx-auto ${currentTheme.subtitle}`}>
+              {subtitle}
+            </p>
+          </div>
+          
+          <div className="text-center py-12">
+            <div className="mb-8">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">No Recent Articles</h3>
+              <p className="text-gray-600 max-w-sm mx-auto text-sm">
+                Stay tuned for fresh content coming soon!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const blogPosts = posts
 
   // Theme styles
   const themeStyles = {
     light: {
       container: "bg-white",
-      title: "text-stone-900",
-      subtitle: "text-stone-700",
+      title: "text-stone-950",
+      subtitle: "text-stone-950",
       card: "bg-white border border-gray-200",
-      category: "bg-gray-100 text-gray-700",
-      date: "text-gray-500",
-      excerpt: "text-gray-600",
+      category: "bg-gray-200 text-gray-700",
+      date: "text-stone-800",
+      excerpt: "text-stone-950",
       button: "text-teal-600 hover:text-orange-500",
       nav: "bg-white text-gray-700 hover:bg-gray-100",
       dots: "bg-gray-300",
@@ -184,12 +177,12 @@ const BlogCarousel = ({
     },
     teal: {
       container: "bg-teal-50",
-      title: "text-stone-900",
-      subtitle: "text-stone-700",
+      title: "text-stone-950",
+      subtitle: "text-stone-950",
       card: "bg-white border border-teal-100",
-      category: "bg-teal-100 text-teal-800",
-      date: "text-teal-600",
-      excerpt: "text-gray-600",
+      category: "bg-gray-200 text-gray-700",
+      date: "text-stone-800",
+      excerpt: "text-stone-950",
       button: "text-teal-600 hover:text-orange-500",
       nav: "bg-white text-teal-700 hover:bg-teal-50",
       dots: "bg-teal-200",

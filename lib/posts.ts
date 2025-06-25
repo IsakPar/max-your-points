@@ -23,7 +23,7 @@ export const posts: BlogPost[] = [
     author: "Alex Thompson",
     date: "May 15, 2024",
     readTime: "8 min read",
-    image: "/airline-points.jpg",
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/maximize-airline-points"
   },
   {
@@ -35,7 +35,7 @@ export const posts: BlogPost[] = [
     author: "Sarah Chen",
     date: "May 12, 2024",
     readTime: "10 min read",
-    image: "/travel-rewards-cards.png",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/best-credit-cards-travel"
   },
   {
@@ -47,7 +47,7 @@ export const posts: BlogPost[] = [
     author: "Michael Rodriguez",
     date: "May 10, 2024",
     readTime: "7 min read",
-    image: "/luxury-hotel-room-with-view.png",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/budget-luxury-hotels"
   },
   {
@@ -59,7 +59,7 @@ export const posts: BlogPost[] = [
     author: "Emma Wilson",
     date: "May 8, 2024",
     readTime: "6 min read",
-    image: "/hidden-gems.jpg",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/hidden-gems"
   },
   {
@@ -71,7 +71,7 @@ export const posts: BlogPost[] = [
     author: "David Kim",
     date: "May 5, 2024",
     readTime: "12 min read",
-    image: "/travel-planning-laptop.png",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/travel-hacking-101"
   },
   {
@@ -83,7 +83,7 @@ export const posts: BlogPost[] = [
     author: "Lisa Patel",
     date: "May 3, 2024",
     readTime: "9 min read",
-    image: "/airline-status.jpg",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/airline-status-match"
   },
   // New credit card posts
@@ -96,7 +96,7 @@ export const posts: BlogPost[] = [
     author: "Alex Thompson",
     date: "May 1, 2024",
     readTime: "11 min read",
-    image: "/chase-sapphire.jpg",
+    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/chase-sapphire-reserve-review"
   },
   {
@@ -108,7 +108,7 @@ export const posts: BlogPost[] = [
     author: "Sarah Chen",
     date: "April 28, 2024",
     readTime: "5 min read",
-    image: "/amex-platinum.jpg",
+    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/amex-platinum-updates"
   },
   {
@@ -120,7 +120,7 @@ export const posts: BlogPost[] = [
     author: "Michael Rodriguez",
     date: "April 25, 2024",
     readTime: "9 min read",
-    image: "/points-vs-cash.jpg",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/points-vs-cashback"
   },
   {
@@ -132,7 +132,7 @@ export const posts: BlogPost[] = [
     author: "Emma Wilson",
     date: "April 22, 2024",
     readTime: "8 min read",
-    image: "/first-class-experience.jpg",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/first-class-tokyo"
   },
   {
@@ -144,7 +144,7 @@ export const posts: BlogPost[] = [
     author: "David Kim",
     date: "April 20, 2024",
     readTime: "10 min read",
-    image: "/business-cards.jpg",
+    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/best-business-cards"
   },
   {
@@ -156,7 +156,7 @@ export const posts: BlogPost[] = [
     author: "Lisa Patel",
     date: "April 18, 2024",
     readTime: "7 min read",
-    image: "/application-strategy.jpg",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/credit-card-strategy"
   },
   // Additional Airlines & Aviation posts
@@ -169,7 +169,7 @@ export const posts: BlogPost[] = [
     author: "Alex Thompson",
     date: "April 15, 2024",
     readTime: "8 min read",
-    image: "/airline-alliances.jpg",
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/airline-alliance-guide"
   },
   {
@@ -181,7 +181,7 @@ export const posts: BlogPost[] = [
     author: "Sarah Chen",
     date: "April 12, 2024",
     readTime: "10 min read",
-    image: "/first-class-awards.jpg",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/best-first-class-awards"
   },
   // Additional Hotels & Trip Reports posts
@@ -194,7 +194,7 @@ export const posts: BlogPost[] = [
     author: "Michael Rodriguez",
     date: "April 10, 2024",
     readTime: "9 min read",
-    image: "/ritz-carlton.jpg",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/ritz-carlton-review"
   },
   {
@@ -206,7 +206,7 @@ export const posts: BlogPost[] = [
     author: "Emma Wilson",
     date: "April 8, 2024",
     readTime: "7 min read",
-    image: "/paris-boutique.jpg",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/paris-boutique-hotels"
   },
   {
@@ -218,7 +218,7 @@ export const posts: BlogPost[] = [
     author: "David Kim",
     date: "April 5, 2024",
     readTime: "8 min read",
-    image: "/hotel-status.jpg",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/hotel-status-match"
   },
   // Additional Travel Hacks & Deals posts
@@ -231,7 +231,7 @@ export const posts: BlogPost[] = [
     author: "Lisa Patel",
     date: "April 3, 2024",
     readTime: "9 min read",
-    image: "/flight-tips.jpg",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/secret-flight-tips"
   },
   {
@@ -243,7 +243,7 @@ export const posts: BlogPost[] = [
     author: "Alex Thompson",
     date: "April 1, 2024",
     readTime: "7 min read",
-    image: "/travel-insurance.jpg",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop&crop=center",
     slug: "/blog/travel-insurance-guide"
   }
 ] 

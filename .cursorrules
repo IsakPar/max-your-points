@@ -1,0 +1,52 @@
+# Cursor Rules for Max Your Points CMS
+
+## Package Manager
+- **ALWAYS use pnpm** as the package manager
+- Never use npm or yarn
+- Use `pnpm install` instead of `npm install`
+- Use `pnpm run <script>` instead of `npm run <script>`
+- Use `pnpm add <package>` instead of `npm install <package>`
+- Use `pnpm remove <package>` instead of `npm uninstall <package>`
+
+## Project Standards
+- This is a Next.js 15.2.4 project with TypeScript
+- Uses Supabase for backend and authentication
+- Uses Tailwind CSS for styling
+- Uses shadcn/ui for UI components
+- Custom CMS built with Supabase (no Payload CMS)
+
+## UI/UX Preservation (CRITICAL)
+- **NEVER change existing UI, layout, styling, or user interactions without explicit approval**
+- All database integration must maintain exact same visual appearance and behavior
+- When replacing static data with database queries, ensure identical frontend experience
+- No modifications to component styling, layouts, or user flows
+- Preserve all existing animations, hover effects, and interactive elements
+- Any UI/UX change MUST be explicitly requested and approved by the user
+
+## Code Style
+- Use TypeScript for all new files
+- Follow Next.js App Router conventions
+- Use server components by default, client components only when necessary
+- Keep API routes secure with proper authentication
+- Use Supabase RLS (Row Level Security) policies
+- Always handle errors gracefully
+
+## Security
+- Never expose sensitive environment variables
+- Always validate user permissions for admin operations
+- Use service role key only in secure server-side contexts
+- Store credentials securely and remind users to delete temporary credential files
+
+## File Structure
+- `/app` - Next.js app router pages and layouts
+- `/components` - Reusable UI components
+- `/lib` - Utility functions and configurations
+- `/scripts` - Build and setup scripts
+- Admin routes under `/app/admin`
+- API routes under `/app/api`
+
+## Dependencies
+- Keep dependencies up to date
+- Prefer well-maintained packages
+- Use exact versions for critical packages
+- Document any new major dependencies 

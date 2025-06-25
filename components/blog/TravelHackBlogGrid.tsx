@@ -5,14 +5,25 @@ import { type BlogPost } from "@/lib/posts"
 
 interface TravelHackBlogGridProps {
   posts: BlogPost[]
+  initialFilter?: string | null
 }
 
-type FilterType = "News" | "Guides" | "Deals" | null
+type FilterType = "News" | "Guides" | "Deals" | "Price Alerts" | null
 
-export default function TravelHackBlogGrid({ posts }: TravelHackBlogGridProps) {
+export default function TravelHackBlogGrid({ posts, initialFilter }: TravelHackBlogGridProps) {
   const [activeFilter, setActiveFilter] = React.useState<FilterType>(null)
+  
+  // Set initial filter when component mounts or initialFilter changes
+  React.useEffect(() => {
+    if (initialFilter) {
+      const capitalizedFilter = initialFilter.charAt(0).toUpperCase() + initialFilter.slice(1)
+      if (["News", "Guides", "Deals", "Price Alerts"].includes(capitalizedFilter)) {
+        setActiveFilter(capitalizedFilter as FilterType)
+      }
+    }
+  }, [initialFilter])
 
-  const filters: FilterType[] = ["News", "Guides", "Deals"]
+  const filters: FilterType[] = ["News", "Guides", "Deals", "Price Alerts"]
 
   const filteredPosts = React.useMemo(() => {
     if (!activeFilter) return posts
@@ -26,7 +37,7 @@ export default function TravelHackBlogGrid({ posts }: TravelHackBlogGridProps) {
   return (
     <div className="w-full py-12 bg-teal-50">
       {/* Toggle Menu */}
-      <div className="flex justify-center mb-12">
+      <div id="toggle" className="flex justify-center mb-12">
         <div className="relative inline-flex rounded-2xl border border-stone-200 p-1.5 bg-white shadow-sm">
           {/* Sliding highlight for active button */}
           <div 
@@ -95,12 +106,7 @@ export default function TravelHackBlogGrid({ posts }: TravelHackBlogGridProps) {
                 {post.summary}
               </p>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-xs text-gray-500">AV</span>
-                  </div>
-                  <span className="text-sm text-gray-600">{post.author}</span>
-                </div>
+                <span className="text-sm text-gray-600">{post.author}</span>
                 <span className="text-sm text-gray-500">{post.date}</span>
               </div>
             </div>
