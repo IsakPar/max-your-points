@@ -56,6 +56,11 @@ async function initializeDatabase() {
     // Strategy 1: Try with basic configuration
     try {
       logger.info('Attempting Prisma initialization (strategy 1)...');
+      
+      // Disable Prisma telemetry and tracing via environment variables
+      process.env.PRISMA_DISABLE_TELEMETRY = '1';
+      process.env.PRISMA_DISABLE_TRACING = '1';
+      
       prisma = new PrismaClient({
         datasources: {
           db: {
@@ -77,6 +82,11 @@ async function initializeDatabase() {
         if (prisma) {
           await prisma.$disconnect();
         }
+        
+        // Ensure telemetry and tracing are disabled
+        process.env.PRISMA_DISABLE_TELEMETRY = '1';
+        process.env.PRISMA_DISABLE_TRACING = '1';
+        
         prisma = new PrismaClient();
         await prisma.$connect();
         prismaInitialized = true;

@@ -8,13 +8,17 @@ services:
     plan: starter
     region: frankfurt
     branch: main
-          envVars:
-        - key: NODE_ENV
-          value: production
-        - key: PORT
-          value: 10000
-              - key: PRISMA_DISABLE_TELEMETRY
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: PRISMA_DISABLE_TELEMETRY
         value: "1"
+      - key: PRISMA_DISABLE_TRACING
+        value: "1"
+      - key: PRISMA_SKIP_POSTINSTALL_GENERATE
+        value: "true"
       - key: RUST_BACKTRACE
         value: "1"
       - key: PRISMA_ENGINE_TYPE
