@@ -18,7 +18,7 @@ import mediaRoutes from './routes/media';
 import adminRoutes from './routes/admin';
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Different port from Next.js
+const PORT = parseInt(process.env.PORT || '3005', 10); // Convert to number for Railway
 const logger = createLogger();
 
 // Initialize Prisma with proper configuration
@@ -30,9 +30,15 @@ async function initializeDatabase() {
   try {
     logger.info('🔄 Initializing database connection...');
     
+    if (!process.env.DATABASE_URL) {
+      logger.warn('⚠️ No DATABASE_URL found, skipping database connection');
+      dbConnected = false;
+      return;
+    }
+    
     // Initialize Prisma client with proper configuration
     prisma = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
+      log: process.env.NODE_ENV === 'development' ? ['info', 'warn', 'error'] : ['warn', 'error'],
       errorFormat: 'pretty'
     });
     
@@ -42,15 +48,9 @@ async function initializeDatabase() {
     
     dbConnected = true;
     logger.info('✅ Database connected successfully');
-    logger.info(`📊 Database URL: ${process.env.DATABASE_URL ? 'SET' : 'NOT SET'}`);
     
   } catch (error: any) {
     logger.error('❌ Database connection failed:', error.message);
-    logger.error('📋 Connection details:', {
-      hasUrl: !!process.env.DATABASE_URL,
-      nodeEnv: process.env.NODE_ENV,
-      port: PORT
-    });
     logger.info('🔄 Server will continue with limited functionality');
     
     // Set prisma to null if connection fails
@@ -74,26 +74,44 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// Logging middleware
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.path} - ${req.ip}`);
-  next();
-});
+// Logging middleware (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    logger.info(`${req.method} ${req.path} - ${req.ip}`);
+    next();
+  });
+}
 
-// Health check endpoint
+// Health check endpoint - MUST be first
 app.get('/health', (req, res) => {
-  res.json({ 
+  res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
     version: '1.0.0',
     database: dbConnected ? 'connected' : 'disconnected',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    port: PORT
+  });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Max Your Points Backend API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      test: '/api/test',
+      auth: '/api/auth',
+      articles: '/api/articles'
+    }
   });
 });
 
 // Test endpoint that doesn't require database
 app.get('/api/test', (req, res) => {
-  res.json({
+  res.status(200).json({
     message: 'Backend is working!',
     timestamp: new Date().toISOString(),
     database: dbConnected ? 'connected' : 'disconnected',
@@ -104,7 +122,7 @@ app.get('/api/test', (req, res) => {
 
 // Database status endpoint
 app.get('/api/database/status', (req, res) => {
-  res.json({
+  res.status(200).json({
     connected: dbConnected,
     timestamp: new Date().toISOString(),
     prismaStatus: prisma ? 'initialized' : 'not initialized'
@@ -122,7 +140,7 @@ app.get('/api/database/test', async (req, res) => {
 
   try {
     const result = await prisma.$queryRaw`SELECT version()`;
-    res.json({
+    res.status(200).json({
       success: true,
       database: result,
       timestamp: new Date().toISOString()
@@ -135,7 +153,7 @@ app.get('/api/database/test', async (req, res) => {
   }
 });
 
-// API Routes (only if database is connected, or with fallbacks)
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/articles', articleRoutes);
@@ -147,7 +165,8 @@ app.use('/api/admin', adminRoutes);
 app.use('*', (req, res) => {
   res.status(404).json({ 
     error: 'Route not found',
-    path: req.originalUrl 
+    path: req.originalUrl,
+    availableRoutes: ['/health', '/', '/api/test', '/api/auth', '/api/articles']
   });
 });
 
@@ -181,21 +200,30 @@ process.on('SIGTERM', async () => {
 });
 
 // Start server
-async function startServer() {
-  try {
-    app.listen(PORT, () => {
-      logger.info(`🚀 Max Your Points Backend running on port ${PORT}`);
-      logger.info(`📊 Health check: http://localhost:${PORT}/health`);
-      logger.info(`🧪 Test endpoint: http://localhost:${PORT}/api/test`);
-      logger.info(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
-      
-      // Try to initialize database connection in background
-      initializeDatabase();
+function startServer() {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    logger.info(`🚀 Max Your Points Backend running on port ${PORT}`);
+    logger.info(`📊 Health check: http://localhost:${PORT}/health`);
+    logger.info(`🧪 Test endpoint: http://localhost:${PORT}/api/test`);
+    logger.info(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+    
+    // Initialize database connection in background
+    initializeDatabase().catch(err => {
+      logger.error('Database initialization failed:', err);
     });
-  } catch (error) {
-    logger.error('Failed to start server:', error);
+  });
+
+  server.on('error', (error: any) => {
+    if (error.code === 'EADDRINUSE') {
+      logger.error(`Port ${PORT} is already in use`);
+    } else {
+      logger.error('Server error:', error);
+    }
     process.exit(1);
-  }
+  });
+
+  return server;
 }
 
+// Start the server
 startServer(); 
