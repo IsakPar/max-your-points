@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@prisma/client':
-        specifier: ^5.22.0
+        specifier: ^5.10.0
         version: 5.22.0(prisma@5.22.0)
       '@types/pg':
         specifier: ^8.15.4
@@ -73,7 +73,7 @@ importers:
         specifier: ^20.10.4
         version: 20.19.1
       prisma:
-        specifier: ^5.22.0
+        specifier: ^5.10.0
         version: 5.22.0
       tsx:
         specifier: ^4.6.2

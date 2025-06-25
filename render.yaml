@@ -13,10 +13,16 @@ services:
           value: production
         - key: PORT
           value: 10000
-        - key: PRISMA_DISABLE_TELEMETRY
-          value: "1"
-        - key: RUST_BACKTRACE
-          value: "1"
+              - key: PRISMA_DISABLE_TELEMETRY
+        value: "1"
+      - key: RUST_BACKTRACE
+        value: "1"
+      - key: PRISMA_ENGINE_TYPE
+        value: "binary"
+      - key: PRISMA_QUERY_ENGINE_BINARY
+        value: "query-engine"
+      - key: NODE_ENV
+        value: "production"
       - key: JWT_SECRET
         value: max-your-points-super-secret-jwt-key-2024-production
       - key: JWT_EXPIRES_IN

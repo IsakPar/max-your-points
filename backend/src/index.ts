@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
 import { createLogger } from './utils/logger';
 import path from 'path';
 
@@ -27,11 +28,13 @@ const app = express();
 const PORT = parseInt(process.env.PORT || '3005', 10); // Convert to number for Railway
 const logger = createLogger();
 
-// Initialize Prisma with proper configuration
+// Initialize database clients
 let prisma: PrismaClient | null = null;
+let pgPool: Pool | null = null;
 let dbConnected = false;
+let usingPrisma = false;
 
-// Async function to initialize database connection
+// Async function to initialize database connection with better error handling
 async function initializeDatabase() {
   try {
     logger.info('🔄 Initializing database connection...');
@@ -47,28 +50,100 @@ async function initializeDatabase() {
     
     logger.info('✅ DATABASE_URL found, attempting connection...');
     
-    // Initialize Prisma client with minimal configuration to prevent core dump
-    prisma = new PrismaClient();
+    // Try to initialize Prisma with multiple fallback strategies
+    let prismaInitialized = false;
     
-    // Test the connection
-    await prisma.$connect();
-    await prisma.$queryRaw`SELECT 1`;
+    // Strategy 1: Try with basic configuration
+    try {
+      logger.info('Attempting Prisma initialization (strategy 1)...');
+      prisma = new PrismaClient({
+        datasources: {
+          db: {
+            url: dbUrl
+          }
+        }
+      });
+      await prisma.$connect();
+      prismaInitialized = true;
+      logger.info('✅ Prisma strategy 1 successful');
+    } catch (error: any) {
+      logger.warn('Strategy 1 failed:', error.message);
+    }
     
-    dbConnected = true;
-    logger.info('✅ Database connected successfully');
+    // Strategy 2: Try with minimal configuration if strategy 1 failed
+    if (!prismaInitialized) {
+      try {
+        logger.info('Attempting Prisma initialization (strategy 2)...');
+        if (prisma) {
+          await prisma.$disconnect();
+        }
+        prisma = new PrismaClient();
+        await prisma.$connect();
+        prismaInitialized = true;
+        logger.info('✅ Prisma strategy 2 successful');
+      } catch (error: any) {
+        logger.warn('Strategy 2 failed:', error.message);
+      }
+    }
+    
+    if (prismaInitialized && prisma) {
+      // Test the connection
+      await prisma.$queryRaw`SELECT 1`;
+      dbConnected = true;
+      usingPrisma = true;
+      logger.info('✅ Database connected successfully via Prisma');
+    } else {
+      logger.warn('All Prisma initialization strategies failed, trying native PostgreSQL client...');
+      
+      // Strategy 3: Use native PostgreSQL client as fallback
+      try {
+        pgPool = new Pool({
+          connectionString: dbUrl,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        });
+        
+        // Test the connection
+        const client = await pgPool.connect();
+        await client.query('SELECT 1');
+        client.release();
+        
+        dbConnected = true;
+        usingPrisma = false;
+        logger.info('✅ Database connected successfully via native PostgreSQL client');
+      } catch (pgError: any) {
+        logger.error('Native PostgreSQL client also failed:', pgError.message);
+        throw new Error('All database connection strategies failed');
+      }
+    }
     
   } catch (error: any) {
     logger.error('❌ Database connection failed:', error.message);
     logger.info('🔄 Server will continue with limited functionality');
     
-    // Set prisma to null if connection fails
+    // Clean up connections if initialization fails
+    if (prisma) {
+      try {
+        await prisma.$disconnect();
+      } catch (disconnectError) {
+        logger.warn('Error disconnecting Prisma:', disconnectError);
+      }
+    }
+    if (pgPool) {
+      try {
+        await pgPool.end();
+      } catch (disconnectError) {
+        logger.warn('Error disconnecting PostgreSQL pool:', disconnectError);
+      }
+    }
     prisma = null;
+    pgPool = null;
     dbConnected = false;
+    usingPrisma = false;
   }
 }
 
-// Export prisma for routes to use
-export { prisma };
+// Export database clients for routes to use
+export { prisma, pgPool, usingPrisma };
 
 // Middleware
 app.use(helmet());
@@ -133,13 +208,15 @@ app.get('/api/database/status', (req, res) => {
   res.status(200).json({
     connected: dbConnected,
     timestamp: new Date().toISOString(),
-    prismaStatus: prisma ? 'initialized' : 'not initialized'
+    prismaStatus: prisma ? 'initialized' : 'not initialized',
+    pgPoolStatus: pgPool ? 'initialized' : 'not initialized',
+    databaseClient: usingPrisma ? 'prisma' : 'postgresql'
   });
 });
 
 // Database test endpoint
 app.get('/api/database/test', async (req, res) => {
-  if (!prisma || !dbConnected) {
+  if (!dbConnected) {
     return res.status(503).json({
       error: 'Database not connected',
       connected: dbConnected
@@ -147,16 +224,33 @@ app.get('/api/database/test', async (req, res) => {
   }
 
   try {
-    const result = await prisma.$queryRaw`SELECT version()`;
+    let result;
+    
+    if (usingPrisma && prisma) {
+      result = await prisma.$queryRaw`SELECT version() as version`;
+    } else if (pgPool) {
+      const client = await pgPool.connect();
+      try {
+        const queryResult = await client.query('SELECT version()');
+        result = queryResult.rows;
+      } finally {
+        client.release();
+      }
+    } else {
+      throw new Error('No database client available');
+    }
+    
     res.status(200).json({
       success: true,
       database: result,
+      client: usingPrisma ? 'prisma' : 'postgresql',
       timestamp: new Date().toISOString()
     });
   } catch (error: any) {
     res.status(500).json({
       error: 'Database query failed',
-      message: error.message
+      message: error.message,
+      client: usingPrisma ? 'prisma' : 'postgresql'
     });
   }
 });
@@ -196,6 +290,9 @@ process.on('SIGINT', async () => {
   if (prisma) {
     await prisma.$disconnect();
   }
+  if (pgPool) {
+    await pgPool.end();
+  }
   process.exit(0);
 });
 
@@ -203,6 +300,9 @@ process.on('SIGTERM', async () => {
   logger.info('Received SIGTERM, shutting down gracefully...');
   if (prisma) {
     await prisma.$disconnect();
+  }
+  if (pgPool) {
+    await pgPool.end();
   }
   process.exit(0);
 });
