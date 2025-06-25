@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: max-your-points-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate
+    startCommand: npx prisma db push && npm start
+    plan: starter
+    region: frankfurt
+    branch: main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        value: max-your-points-super-secret-jwt-key-2024-production
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: LOG_LEVEL
+        value: info
+      - key: FRONTEND_URL
+        generateValue: true # Will be set after frontend deployment
+      - key: CORS_ORIGIN
+        generateValue: true # Will be set after frontend deployment
+      # Database URL will be set after database creation
+      - key: DATABASE_URL
+        fromDatabase:
+          name: max-your-points-db
+          property: connectionString
+      # Cloudinary settings - you'll need to set these manually
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      # Mailgun settings - you'll need to set these manually  
+      - key: MAILGUN_API_KEY
+        sync: false
+      - key: MAILGUN_DOMAIN
+        sync: false
+      - key: MAILGUN_FROM_EMAIL
+        sync: false
+
+databases:
+  - name: max-your-points-db
+    databaseName: max_your_points
+    user: max_your_points_user
+    plan: starter
+    region: frankfurt 
